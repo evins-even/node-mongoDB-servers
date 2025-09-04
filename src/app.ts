@@ -16,6 +16,7 @@ const app = express();
 // 中间件
 app.use(helmet()); // 安全头部
 app.use(cors()); // 跨域支持 允许所有来源
+
 // 启用 CORS - 允许前端端口 3000 访问
 /* app.use(cors({
   origin: 'http://localhost:3001', // 前端地址

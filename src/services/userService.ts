@@ -22,11 +22,6 @@ export class UserService {
     return await User.findById(id);
   }
 
-  // 根据邮箱获取用户
-  static async getUserByEmail(email: string): Promise<IUser | null> {
-    return await User.findByEmail(email);
-  }
-
   // 更新用户
   static async updateUser(
     id: string,
