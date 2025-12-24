@@ -1,22 +1,29 @@
 import bcrypt from "bcryptjs";
 import { AuthenticateUser, AuthModel } from "../models/Auth";
+import generateTokens from "../utils/generateTokens";
+
+type passMes = {
+  isPass: boolean
+  uuid: string
+}
 
 export class AuthService {
   static async authenticateUser(
     email: string,
     password: string
-  ): Promise<boolean> {
+  ): Promise<passMes> {
     // Implement authentication logic here
     const user = await AuthModel.findOne({ email });
     if (!user) {
       throw new Error("User not found");
     }
     const isPass = await user.comparePasswords(password);
-    if (!isPass) {
-      throw new Error("Invalid password");
-    }
-    return true;
+    return {
+      isPass: isPass,
+      uuid: user.uuid,
+    };
   }
+
   static async registerUser(userMes: {
     userName: string;
     email: string;

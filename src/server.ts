@@ -7,7 +7,7 @@ const startServer = async (): Promise<void> => {
   try {
     // 连接数据库
     await connectDB();
-    
+
     // 启动服务器
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);

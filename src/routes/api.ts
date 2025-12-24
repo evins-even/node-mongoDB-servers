@@ -1,12 +1,14 @@
 import { Router } from "express";
-import userRoutes from "./users";
-import authRoutes from "./auth";
+import userRoutes from "./backend/users";
+import backend from "./backend/backend";
 
 const router = Router();
 
-// 挂载子路由
-router.use("/users", userRoutes);
-router.use("/auth", authRoutes);
+// 前台路由 (Frontend routes)
+router.use("/frontend", userRoutes);
+
+// 后台路由 (Backend routes) 
+router.use("/backend", backend);
 
 // API 信息
 router.get("/", (req, res) => {

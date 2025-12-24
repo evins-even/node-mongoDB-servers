@@ -1,7 +1,9 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 import bcrypt from "bcryptjs";
+import { randomUUID } from 'crypto';
 // 1. 定义文档接口
 export interface AuthenticateUser extends Document {
+  uuid: string;
   userName: string;
   email: string;
   passwordHash: string;
@@ -10,8 +12,15 @@ export interface AuthenticateUser extends Document {
   lockUntil: Date;
   comparePasswords: (password: string) => Promise<boolean>;
 }
+
 const AuthSchema = new Schema<AuthenticateUser>(
   {
+    uuid: {
+      type: String,
+      default: () => randomUUID(),
+      unique: true,
+      index: true
+    },
     userName: {
       type: String,
       required: true,

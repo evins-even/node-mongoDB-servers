@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
-
+import { v4 as uuidv4 } from 'uuid';
 // 1. 定义文档接口
 export interface IUser extends Document {
-  userId: mongoose.Schema.Types.ObjectId;
+  userId: string;
   name: string;
   age?: number;
   createdAt: Date;
@@ -27,8 +27,7 @@ export interface IUserModel extends Model<IUser> {
 const userSchema = new Schema<IUser, IUserModel>(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "AuthenticateUser", // 这建立了“引用”，用于 populate() 方法
+      type: String,
       required: true,
       unique: true, // 确保一个认证账户只有一个资料
     },

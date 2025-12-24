@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { AuthService } from "../services/authService";
+import { AuthService } from "../../services/authService";
+import generateTokens from "../../utils/generateTokens";
 export const authController = {
   // 注册新用户
   register: async (req: Request, res: Response): Promise<void> => {
@@ -20,16 +21,20 @@ export const authController = {
   login: async (req: Request, res: Response): Promise<void> => {
     try {
       const { userName, email, password } = req.body;
-      const isPass = await AuthService.authenticateUser(email, password);
-      if (!isPass) {
-        res.status(401).json({ error: "Invalid credentials" });
+      // 验证登录 
+      const LoginMessage = await AuthService.authenticateUser(email, password);
+      if (!LoginMessage.isPass) {
+        res.status(401).json({ error: "邮箱或密码错误" });
         return;
       }
+      // 生成JWT 
+      const token = generateTokens({ userName, uuid: LoginMessage.uuid })
       res.status(200).json({
         message: "Login successful",
         userName: userName,
         success: true,
-        // token: "your-jwt-token",
+        token: token.accessToken,
+        refreshToken: token.refreshToken,
       });
     } catch (error: any) {
       console.log(error)
