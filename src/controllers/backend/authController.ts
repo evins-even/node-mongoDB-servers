@@ -1,44 +1,36 @@
-import { Request, Response } from "express";
-import { AuthService } from "../../services/authService";
-import generateTokens from "../../utils/generateTokens";
-export const authController = {
-  // 注册新用户
-  register: async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { userName, email, password } = req.body;
-      const userData = { userName, email, password };
-      const user = await AuthService.registerUser(userData);
-      if (!user) {
-        res.status(400).json({ error: "Failed to create user" });
-        return;
-      }
-      res.status(201).json({ message: "User created successfully", userName });
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
+import { Request, Response, NextFunction } from "express"
+
+// 思考：一个认证 Controller 应该有哪些方法？
+class AuthController {
+    // 1. 登录 - 对应 POST /api/backend/auth/login
+    login = async (req: Request, res: Response, next: NextFunction) => {
+        // TODO: 你来实现
+        // 提示：
+        // - 从 req.body 获取 email 和 password
+        const { email, password } = req.body;
+        // - 调用 authService.login()
+        // - 返回 token
     }
-  },
-  // 用户登录
-  login: async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { userName, email, password } = req.body;
-      // 验证登录 
-      const LoginMessage = await AuthService.authenticateUser(email, password);
-      if (!LoginMessage.isPass) {
-        res.status(401).json({ error: "邮箱或密码错误" });
-        return;
-      }
-      // 生成JWT 
-      const token = generateTokens({ userName, uuid: LoginMessage.uuid })
-      res.status(200).json({
-        message: "Login successful",
-        userName: userName,
-        success: true,
-        token: token.accessToken,
-        refreshToken: token.refreshToken,
-      });
-    } catch (error: any) {
-      console.log(error)
-      res.status(500).json({ error: error.message });
+
+    // 2. 登出 - 对应 POST /api/backend/auth/logout
+    logout = async (req: Request, res: Response, next: NextFunction) => {
+        // TODO: 你来实现
     }
-  },
-};
+
+    // 3. 刷新 Token - 对应 POST /api/backend/auth/refresh
+    refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+        // TODO: 你来实现
+    }
+
+    // 4. 获取当前用户信息 - 对应 GET /api/backend/auth/profile
+    getProfile = async (req: Request, res: Response, next: NextFunction) => {
+        // TODO: 你来实现
+    }
+
+    // 5. 更新个人资料 - 对应 PUT /api/backend/auth/profile
+    updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+        // TODO: 你来实现
+    }
+}
+// 导出实例，供路由使用
+export const authController = new AuthController();

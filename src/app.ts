@@ -1,12 +1,13 @@
-import dotenv from "dotenv";
+import cors from "cors";
+import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import connectDB from "./config/database";
+import { setupSwagger } from "./config/swagger";
 import { errorHandler } from "./middleware/errorHandler";
 import { notFound } from "./middleware/notFound";
-import express from "express";
-import cors from "cors";
 import apiRoutes from "./routes/api";
+import dotenv from "dotenv";
 dotenv.config();
 
 // 连接数据库
@@ -25,6 +26,9 @@ app.use(cors()); // 跨域支持 允许所有来源
 app.use(morgan("combined")); // 请求日志
 app.use(express.json({ limit: "10mb" })); // JSON 解析
 app.use(express.urlencoded({ extended: true })); // URL 编码解析
+
+// Swagger 文档
+setupSwagger(app);
 
 // 路由
 app.use("/api", apiRoutes);

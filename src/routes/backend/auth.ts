@@ -1,8 +1,7 @@
 import { Router } from "express";
 import { authController } from "../../controllers/backend/authController";
+const auth = Router();
+// 登录 - POST /api/backend/auth/Login
+auth.post("/login", authController.login);
 
-const router = Router();
-
-router.post("/LoginAuther", authController.login);
-router.post("/Register", authController.register);
-export default router;
+export default auth;
