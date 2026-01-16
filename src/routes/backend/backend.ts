@@ -1,8 +1,9 @@
 import { Router } from "express";
-import auth from "./auth";
+import authRoutes from "./auth";
 
 const backend = Router();
+
 // 认证相关路由
-backend.use("/auth", auth);
+backend.use("/auth", authRoutes);
 
 export default backend;
