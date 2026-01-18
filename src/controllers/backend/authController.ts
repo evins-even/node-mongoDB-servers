@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import AuthService from "../../services/authService";
+import { successResponse, errorResponse } from "../../utils/apiResponse";
 
 /**
  * 认证控制器
@@ -23,10 +24,7 @@ class AuthController {
 
       // 2. 参数验证
       if (!email || !password) {
-        res.status(400).json({
-          success: false,
-          error: "邮箱和密码为必填项",
-        });
+        errorResponse(res, "邮箱和密码为必填项", 400);
         return;
       }
 
@@ -34,33 +32,28 @@ class AuthController {
       const result = await this.authService.login(email, password);
 
       // 4. 返回成功响应
-      res.status(200).json({
-        success: true,
-        message: "登录成功",
-        data: {
+      successResponse(
+        res,
+        {
           userName: result.userName,
           uuid: result.uuid,
           email: result.email,
           role: result.role,
+          token: result.token,
+          refreshToken: result.refreshToken,
         },
-        token: result.token,
-        refreshToken: result.refreshToken,
-      });
+        "登录成功",
+        200
+      );
     } catch (error: any) {
       // 5. 错误处理
       if (error.message.includes("邮箱或密码错误")) {
-        res.status(401).json({
-          success: false,
-          error: error.message,
-        });
+        errorResponse(res, error.message, 401);
         return;
       }
 
       if (error.message.includes("锁定")) {
-        res.status(423).json({
-          success: false,
-          error: error.message,
-        });
+        errorResponse(res, error.message, 423);
         return;
       }
 
@@ -79,19 +72,13 @@ class AuthController {
 
       // 参数验证
       if (!userName || !email || !password) {
-        res.status(400).json({
-          success: false,
-          error: "用户名、邮箱和密码为必填项",
-        });
+        errorResponse(res, "用户名、邮箱和密码为必填项", 400);
         return;
       }
 
       // 密码长度验证
       if (password.length < 6) {
-        res.status(400).json({
-          success: false,
-          error: "密码长度至少为 6 位",
-        });
+        errorResponse(res, "密码长度至少为 6 位", 400);
         return;
       }
 
@@ -99,18 +86,11 @@ class AuthController {
       const result = await this.authService.register(userName, email, password);
 
       // 返回成功响应
-      res.status(201).json({
-        success: true,
-        message: "注册成功",
-        data: result,
-      });
+      successResponse(res, result, "注册成功", 201);
     } catch (error: any) {
       // 处理特定错误
       if (error.message.includes("已存在") || error.message.includes("已被注册")) {
-        res.status(409).json({
-          success: false,
-          error: error.message,
-        });
+        errorResponse(res, error.message, 409);
         return;
       }
 
@@ -126,10 +106,7 @@ class AuthController {
   logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // JWT 是无状态的，登出只需要前端删除 token
-      res.status(200).json({
-        success: true,
-        message: "登出成功",
-      });
+      successResponse(res, null, "登出成功", 200);
     } catch (error) {
       next(error);
     }
@@ -146,19 +123,13 @@ class AuthController {
       const userId = (req as any).user?.uuid;
 
       if (!userId) {
-        res.status(401).json({
-          success: false,
-          error: "未登录",
-        });
+        errorResponse(res, "未登录", 401);
         return;
       }
 
       const user = await this.authService.getUserInfo(userId);
 
-      res.status(200).json({
-        success: true,
-        data: user,
-      });
+      successResponse(res, user, "获取成功", 200);
     } catch (error) {
       next(error);
     }
@@ -173,18 +144,12 @@ class AuthController {
       const { refreshToken } = req.body;
 
       if (!refreshToken) {
-        res.status(400).json({
-          success: false,
-          error: "refreshToken 为必填项",
-        });
+        errorResponse(res, "refreshToken 为必填项", 400);
         return;
       }
 
       // TODO: 实现 refreshToken 逻辑
-      res.status(200).json({
-        success: true,
-        message: "Token 刷新成功",
-      });
+      successResponse(res, null, "Token 刷新成功", 200);
     } catch (error: any) {
       next(error);
     }
